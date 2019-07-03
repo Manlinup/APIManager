@@ -28,7 +28,8 @@ SELECT MD5('your passwd.');
 ========
 * 在MySQL中新建api数据库，并执行 db.sql文件。如果你是在命令行操作则可以像下面这样：
 ```sql
-source /db.sql;
+v1.1版本  source /db-v1.1.sql;
+v1.2版本  source /db-v1.2.sql;
 ```
 * 在./MinPHP/core/config.php配置文件中修改数据库连接信息
 ```php
