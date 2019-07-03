@@ -13,9 +13,10 @@ switch($op){
             $_VAL = I($_POST);
             $cname = $_VAL['cname'];
             $cdesc = $_VAL['cdesc'];
+            $uid = session('id'); //用户id
             $time = time();
             if(!empty($cname) && !empty($cdesc)){
-                $sql = "insert into cate (cname,cdesc,addtime) values('{$cname}','{$cdesc}','{$time}')";
+                $sql = "insert into cate (cname,cdesc,addtime,uid) values('{$cname}','{$cdesc}','{$time}','{$uid}')";
                 $re = insert($sql);
                 if($re){
                     go(U());

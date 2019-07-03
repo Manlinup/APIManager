@@ -163,6 +163,11 @@
         return session('issupper') == 1 ? true : false;
     }
 
+    //获取登录用户的id
+    function get_uid(){
+        return session('id') ? session('id') : 0;
+    }
+
     //跳转
     function go($url){
         $gourl = '<script language="javascript" type="text/javascript">window.location.href="'.$url.'"</script>';
@@ -228,4 +233,59 @@
         header('Content-Encoding: none');
         header("Content-Transfer-Encoding: binary" );
         die($content);
+    }
+
+    /** Json数据格式化
+    * @param  Mixed  $data   数据
+    * @param  String $indent 缩进字符，默认4个空格
+    * @return JSON
+    */
+    function jsonFormat($data, $indent=null){
+
+        // 对数组中每个元素递归进行urlencode操作，保护中文字符
+        array_walk_recursive($data, 'jsonFormatProtect');
+
+        // 将urlencode的内容进行urldecode
+        $data = urldecode($data);
+
+        // 缩进处理
+        $ret = '';
+        $pos = 0;
+        $length = strlen($data);
+        $indent = isset($indent)? $indent : '    ';
+        $newline = "\n";
+        $prevchar = '';
+        $outofquotes = true;
+
+        for($i=0; $i<=$length; $i++){
+
+            $char = substr($data, $i, 1);
+
+            if($char=='"' && $prevchar!='\\'){
+                $outofquotes = !$outofquotes;
+            }elseif(($char=='}' || $char==']') && $outofquotes){
+                $ret .= $newline;
+                $pos --;
+                for($j=0; $j<$pos; $j++){
+                    $ret .= $indent;
+                }
+            }
+
+            $ret .= $char;
+
+            if(($char==',' || $char=='{' || $char=='[') && $outofquotes){
+                $ret .= $newline;
+                if($char=='{' || $char=='['){
+                    $pos ++;
+                }
+
+                for($j=0; $j<$pos; $j++){
+                    $ret .= $indent;
+                }
+            }
+
+            $prevchar = $char;
+        }
+
+        return $ret;
     }

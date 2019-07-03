@@ -25,14 +25,15 @@
             $lasttime = time(); //最后操作时间
             $lastuid = session('id'); //操作者id
             $isdel = 0; //是否删除的标识
+            $status = 1; //1 待开发，2待对接，3对接完毕
             $sql = "insert into api (
             `aid`,`num`,`name`,`des`,`url`,
             `type`,`parameter`,`re`,`lasttime`,
-            `lastuid`,`isdel`,`memo`,`ord`
+            `lastuid`,`isdel`,`memo`,`ord`,`status`
             )values (
             '{$aid}','{$num}','{$name}','{$des}','{$url}',
             '{$type}','{$parameter}','{$re}','{$lasttime}',
-            '{$lastuid}','{$isdel}','{$memo}','99999'
+            '{$lastuid}','{$isdel}','{$memo}','99999','{$status}'
             )";
             $re = insert($sql);
             if($re){
@@ -58,10 +59,11 @@
            $re = $_VAL['re'];  //返回值
            $lasttime = time(); //最后操作时间
            $lastuid = session('id'); //操作者id
+           $status = $_VAL['status']; //1 待开发，2待对接，3对接完毕
 
            $sql ="update api set num='{$num}',name='{$name}',
            des='{$des}',url='{$url}',type='{$type}',
-           parameter='{$parameter}',re='{$re}',lasttime='{$lasttime}',lastuid='{$lastuid}',memo='{$memo}'
+           parameter='{$parameter}',re='{$re}',lasttime='{$lasttime}',lastuid='{$lastuid}',memo='{$memo}',status='{$status}'
            where id = '{$id}'";
            $re = update($sql);
            if($re){
@@ -122,7 +124,7 @@
       }
       exit();
    }else{
-        $sql = "select api.id,aid,num,url,name,des,parameter,memo,re,lasttime,lastuid,type,login_name
+        $sql = "select api.id,aid,num,url,name,des,parameter,memo,re,lasttime,lastuid,type,login_name,`status`
         from api
         left join user
         on api.lastuid=user.id
@@ -223,6 +225,16 @@ function DeleteCookie(name) {
             <div style="margin-left:20px;">
                 <form action="?act=api&tag=<?php echo $_GET['tag']?>&type=do&op=add" method="post">
                     <h5>基本信息</h5>
+                    <div class="form-group has-error">
+                        <div class="input-group">
+                            <div class="input-group-addon">开发状态</div>
+                            <select class="form-control" name="status" placeholder="开发状态" required="required">
+                                <option value="1">开发中</option>
+                                <option value="2">待对接</option>
+                                <option value="3">对接完成</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="form-group has-error">
                         <div class="input-group">
                             <div class="input-group-addon">接口编号</div>
@@ -334,6 +346,16 @@ function DeleteCookie(name) {
                     <h5>基本信息</h5>
                     <div class="form-group has-error">
                         <div class="input-group">
+                            <div class="input-group-addon">开发状态</div>
+                            <select class="form-control" name="status" placeholder="开发状态" required="required">
+                                <option value="1" <?php if ($info['status'] == 1) echo "selected" ?>>开发中</option>
+                                <option value="2" <?php if ($info['status'] == 2) echo "selected" ?>>待对接</option>
+                                <option value="3" <?php if ($info['status'] == 3) echo "selected" ?>>对接完成</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group has-error">
+                        <div class="input-group">
                             <div class="input-group-addon">接口编号</div>
                             <input type="hidden" name="id" value="<?php echo $info['id']?>"/>
                             <input type="text" class="form-control" name="num" placeholder="接口编号" value="<?php echo $info['num']?>" required="required">
@@ -411,7 +433,8 @@ function DeleteCookie(name) {
                     </div>
                     <div class="form-group">
                         <h5>返回结果</h5>
-                        <textarea name="re" rows="3" class="form-control" placeholder="返回结果"><?php echo $info['re']?></textarea>
+<!--                        <pre>--><?php //echo  $info['re'];?><!--</pre>-->
+                        <textarea id="text" name="re" rows="3" class="form-control" placeholder="返回结果"><?php echo $info['re']?></textarea>
                     </div>
                     <div class="form-group">
                         <h5>备注</h5>
@@ -423,6 +446,13 @@ function DeleteCookie(name) {
         </div>
     </div>
     <script>
+        window.onload = function () {
+            $("#text").height($("#text")[0].scrollHeight);
+            $(this).height(this.scrollHeight);
+            $("#text").on("keyup keydown", function(){
+                $(this).height(this.scrollHeight);
+            });
+        }
         function add(){
             var $html ='<tr>' +
                 '<td class="form-group has-error" >' +
@@ -462,13 +492,16 @@ function DeleteCookie(name) {
             <div style="background:#f5f5f5;padding:20px;position:relative">
                 <div class="textshadow" style="position: absolute;right:0;top:4px;right:8px;">
                     最后修改者: <?php echo $v['login_name']?> &nbsp;<?php echo date('Y-m-d H:i:s',$v['lasttime'])?>&nbsp;
-                    <?php if(is_supper()){?>
-                    <button class="btn btn-danger btn-xs " onclick="deleteApi(<?php echo $v['id']?>,'<?php echo md5($v['id'])?>')">delete</button>&nbsp;
+                    <?php if($v['lastuid'] == get_uid()){?>
+                    <button class="btn btn-danger btn-xs " onclick="deleteApi(<?php echo $v['id']?>,'<?php echo md5($v['id'])?>' ?>)">delete</button>&nbsp;
                     <button class="btn btn-info btn-xs " onclick="editApi('<?php echo U(array('act'=>'api','op'=>'edit','id'=>$v['id'],'tag'=>$_GET['tag']))?>')">edit</button>
                     <button class="btn btn-primary btn-xs " onclick="copyApi(<?php echo $v['id']?>)">copy</button>
                     <?php } ?>
                 </div>
                 <h4 class="textshadow"><?php echo $v['name']?></h4>
+                <p>
+                    <b>开发状态 ： <span><?php if ($v['status'] == 1) {echo '待开发';} elseif ($v['status'] == 2){echo '待对接';} elseif ($v['status'] == 3) {echo '对接完毕';}?></span></b>
+                </p>
                 <p>
                     <b>编号&nbsp;&nbsp;:&nbsp;&nbsp;<span style="color:red"><?php echo $v['num']?></span></b>
                 </p>
