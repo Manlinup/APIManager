@@ -75,7 +75,7 @@
         <ul class="list-unstyled" style="padding:10px">
             <?php foreach($list as $v){ ?>
             <li class="menu" id="api_<?php echo md5($v['id']);?>" status="<?php echo $v["status"]; ?>" >
-                <a href="<?php echo U(array('act'=>'api','tag'=>$_GET['tag'])); ?>#info_api_<?php echo md5($v['id']) ?>" id="<?php echo 'menu_'.md5($v['id'])?>" status="<?php echo $v["status"]; ?>">
+                <a href="<?php echo U(array('act'=>'api','tag'=>$_GET['tag'])); ?>#info_api_<?php echo md5($v['id']) ?>" id="<?php echo 'menu_'.md5($v['id'])?>" status="<?php echo $v["status"];?>" style="<?php if ($v['status'] == 1) { echo 'color:red';} elseif ($v['status'] == 2) {echo 'color:Orange';} elseif ($v['status'] == 3){echo 'color:YellowGreen';}?>">
                     <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
                     <?php echo $v['name'] ?>
                 </a>

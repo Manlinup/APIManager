@@ -25,6 +25,7 @@
     }if($type == 'quit'){
         session('login_name','');
         session('issupper','');
+        session('id','');
         go(U());
     }
 ?>

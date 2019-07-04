@@ -553,7 +553,7 @@ function DeleteCookie(name) {
             <?php if(!empty($v['re'])){ ?>
             <div style="background:#ffffff;padding:20px;">
                 <h5 class="textshadow" >返回值</h5>
-                <pre><?php echo $v['re']?></pre>
+                <pre><?php echo jsonFormat($v['re'])?></pre>
             </div>
             <?php } ?>
             <?php if(!empty($v['memo'])){ ?>

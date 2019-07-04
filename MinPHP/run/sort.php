@@ -9,12 +9,15 @@
     $type = $_GET['type'];
     if(empty($type)){
         //已经分类下的所有接口start
-        $sql = "select id,num,name from api where aid='{$_GET['tag']}' and isdel=0 order by ord desc,id desc";
+        $sql = "select id,num,name,ord from api where aid='{$_GET['tag']}' and isdel=0 order by ord desc,id desc";
         $list = select($sql);
     }else if($type == 'do'){
-        $ord = count($_POST['api']);
-        foreach($_POST['api'] as $v){
-            $sql = "update api set ord = '{$ord}' where id='{$v}' and aid='{$_GET['tag']}'";
+//        $ord = count($_POST['api']);
+        $listOrder = $_POST['list_order'];
+        foreach($_POST['api'] as $k => $v){
+//            $sql = "update api set ord = '{$ord}' where id='{$v}' and aid='{$_GET['tag']}'";
+//            update($sql);
+            $sql = "update api set ord = '{$listOrder[$k]}' where id='{$v}' and aid='{$_GET['tag']}'";
             update($sql);
             $ord--;
         }
@@ -32,6 +35,7 @@
                     <th class="col-md-2">接口编号</th>
                     <th class="col-md-9">接口名</th>
                     <th class="col-md-1">操作</th>
+<!--                    <th class="col-md-1">序号</th>-->
                 </tr>
                 </thead>
                 <tbody>
@@ -39,11 +43,12 @@
                     <tr>
                         <td><input name="api[]" type="hidden" value="<?php echo $v['id'];?>"><?php echo $v['num'];?></td>
                         <td><?php echo $v['name'];?></td>
-                        <td>
-                            <span onclick="up(this)" style="color:red;cursor: pointer" class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-                            &nbsp;
-                            <span  onclick="down(this)" style="color:green;cursor: pointer" class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
-                        </td>
+<!--                        <td>-->
+<!--                            <span onclick="up(this)" style="color:red;cursor: pointer" class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>-->
+<!--                            &nbsp;-->
+<!--                            <span  onclick="down(this)" style="color:green;cursor: pointer" class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>-->
+<!--                        </td>-->
+                        <td><input style="width: 50px" name="list_order[]" value="<?php echo $v['ord']?>"></td>
                     </tr>
                 <?php } ?>
                 </tbody>
