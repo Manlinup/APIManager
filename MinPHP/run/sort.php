@@ -12,13 +12,13 @@
         $sql = "select id,num,name,ord from api where aid='{$_GET['tag']}' and isdel=0 order by ord desc,id desc";
         $list = select($sql);
     }else if($type == 'do'){
-//        $ord = count($_POST['api']);
-        $listOrder = $_POST['list_order'];
+        $ord = count($_POST['api']);
+//        $listOrder = $_POST['list_order'];
         foreach($_POST['api'] as $k => $v){
-//            $sql = "update api set ord = '{$ord}' where id='{$v}' and aid='{$_GET['tag']}'";
-//            update($sql);
-            $sql = "update api set ord = '{$listOrder[$k]}' where id='{$v}' and aid='{$_GET['tag']}'";
+            $sql = "update api set ord = '{$ord}' where id='{$v}' and aid='{$_GET['tag']}'";
             update($sql);
+//            $sql = "update api set ord = '{$listOrder[$k]}' where id='{$v}' and aid='{$_GET['tag']}'";
+//            update($sql);
             $ord--;
         }
         $url = U(array('act'=>'api','tag'=>$_GET['tag']));
@@ -38,17 +38,17 @@
 <!--                    <th class="col-md-1">序号</th>-->
                 </tr>
                 </thead>
-                <tbody>
+                <tbody  id="container">
                 <?php foreach($list as $v){?>
                     <tr>
                         <td><input name="api[]" type="hidden" value="<?php echo $v['id'];?>"><?php echo $v['num'];?></td>
                         <td><?php echo $v['name'];?></td>
-<!--                        <td>-->
-<!--                            <span onclick="up(this)" style="color:red;cursor: pointer" class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>-->
-<!--                            &nbsp;-->
-<!--                            <span  onclick="down(this)" style="color:green;cursor: pointer" class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>-->
-<!--                        </td>-->
-                        <td><input style="width: 50px" name="list_order[]" value="<?php echo $v['ord']?>"></td>
+                        <td>
+                            <span onclick="up(this)" style="color:red;cursor: pointer" class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+                            &nbsp;
+                            <span  onclick="down(this)" style="color:green;cursor: pointer" class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+                        </td>
+<!--                        <td><input style="width: 50px" name="list_order[]" value="--><?php //echo $v['ord']?><!--"></td>-->
                     </tr>
                 <?php } ?>
                 </tbody>
@@ -58,6 +58,10 @@
     </div>
 </div>
 <script>
+    window.onload = function(){
+        dragula([document.getElementById('container')]);
+    }
+
     //上移
     function up(obj){
         var $TR = $(obj).parents('tr');

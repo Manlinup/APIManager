@@ -9,9 +9,12 @@
     <link rel="icon" type="image/x-icon" href="./MinPHP/res/favicon.ico">
     <link href="./MinPHP/res/bootstrap-3.3.4-dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="./MinPHP/res/style.css" rel="stylesheet">
+    <link href="./MinPHP/res/dragula.min.css" rel="stylesheet">
+    <script src="./MinPHP/res/dragula.min.js"></script>
     <!--[if lt IE 9]>
     <script src="./MinPHP/res/html5shiv.min.js"></script>
     <script src="./MinPHP/res/respond.min.js"></script>
+
     <![endif]-->
 </head>
 <body style="height:100%">
